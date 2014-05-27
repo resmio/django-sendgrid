@@ -14,7 +14,7 @@ if not settings.configured:
             }
         },
         INSTALLED_APPS=(
-            '{{ app_name }}',
+            'sendgrid',
         ),
         SITE_ID=1,
         SECRET_KEY='this-is-just-for-tests-so-not-that-secret',
