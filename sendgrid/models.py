@@ -1,5 +1,7 @@
 from django.db import models
 
+import uuid
+
 
 class EmailEvent(models.Model):
     created = models.DateTimeField(auto_now_add=True)
