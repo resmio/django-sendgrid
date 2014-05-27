@@ -27,7 +27,7 @@ from django.test.utils import get_runner
 def run_tests():
     if hasattr(django, 'setup'):
         django.setup()
-    apps = sys.argv[1:] or ['{{ app_name }}', ]
+    apps = sys.argv[1:] or ['sendgrid', ]
     test_runner = get_runner(settings)
     test_runner = test_runner(verbosity=1, interactive=True, failfast=False)
     failures = test_runner.run_tests(apps)

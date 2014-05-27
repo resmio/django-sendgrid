@@ -8,12 +8,13 @@ env:
   - TOXENV=py27-1.5.X,py32-1.5.X
   - TOXENV=py27-1.6.X,py32-1.6.X
   - TOXENV=py27-1.7.X,py32-1.7.X
+  - TOXENV=flake8
 
 install:
   - pip install tox
 
 script:
-    - tox
+    - tox -e $TOX_ENV
 
 branches:
   only:
