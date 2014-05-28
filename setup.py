@@ -21,7 +21,7 @@ setup(
     include_package_data=True,
     url='https://github.com/resmio/django-sendgrid',
     license='BSD 2-Clause',
-    description=u' '.join(__import__('sendgrid').__doc__.splitlines()).strip(),
+    description=' '.join(__import__('sendgrid').__doc__.splitlines()).strip(),
     classifiers=[
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Intended Audience :: Developers',

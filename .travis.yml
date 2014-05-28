@@ -5,9 +5,9 @@ python:
 
 env:
   - TOXENV=py27-1.4.X
-  - TOXENV=py27-1.5.X,py32-1.5.X
-  - TOXENV=py27-1.6.X,py32-1.6.X
-  - TOXENV=py27-1.7.X,py32-1.7.X
+  - TOXENV=py27-1.5.X
+  - TOXENV=py27-1.6.X
+  - TOXENV=py27-1.7.X
   - TOXENV=flake8
 
 install:
@@ -22,4 +22,4 @@ branches:
 
 matrix:
   allow_failures:
-    - env: TOXENV=py27-1.7.X,py32-1.7.X
+    - env: TOXENV=py27-1.7.X
