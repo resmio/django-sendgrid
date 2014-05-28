@@ -14,7 +14,7 @@ if not settings.configured:
             }
         },
         INSTALLED_APPS=(
-            'django.contrib.contenttypes'
+            'django.contrib.contenttypes',
             'sendgrid',
         ),
         SITE_ID=1,
