@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 
 import uuid
