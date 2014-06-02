@@ -23,7 +23,7 @@ class ViewTestCase(TestCase):
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
 
-        # simulate callback by sengrid
+        # simulate callback by sendgrid
         response = self.client.post('/sendgrid_callback/',
                                     data=json.dumps([{
                                         'email': 'other_email@example.com',

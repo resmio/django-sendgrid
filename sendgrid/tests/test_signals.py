@@ -1,6 +1,5 @@
 from django.test import TestCase, Client
 
-from sendgrid import signals
 from sendgrid import utils
 
 import json
