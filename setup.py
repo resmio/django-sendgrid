@@ -13,7 +13,7 @@ def read_file(filename):
 
 
 setup(
-    name='django-sendgrid',
+    name='django-sendgrid-webhook',
     version=__import__('sendgrid').__version__,
     author='Jann Kleen',
     author_email='jann.kleen@gmail.com',
