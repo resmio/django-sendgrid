@@ -5,8 +5,10 @@ import json
 
 
 class SendgridEmailMessage(EmailMessage):
-    def __init__(self, *args, **kwargs):
-        super(SendgridEmailMessage, self).__init__(*args, **kwargs)
+    def __init__(self, subject='', body='', from_email=None, to=None, bcc=None,
+                 connection=None, attachments=None, headers=None, cc=None):
+        super(SendgridEmailMessage, self).__init__(subject, body, from_email, to, bcc, connection, attachments,
+                                                   headers, cc)
         self.extra_headers.update({
             'X-SMTPAPI': json.dumps({
                 'unique_args': {
@@ -17,8 +19,10 @@ class SendgridEmailMessage(EmailMessage):
 
 
 class SendgridEmailMultiAlternatives(EmailMultiAlternatives):
-    def __init__(self, *args, **kwargs):
-        super(SendgridEmailMultiAlternatives, self).__init__(*args, **kwargs)
+    def __init__(self, subject='', body='', from_email=None, to=None, bcc=None,
+                 connection=None, attachments=None, headers=None, cc=None):
+        super(SendgridEmailMultiAlternatives, self).__init__(subject, body, from_email, to, bcc, connection,
+                                                             attachments, headers, cc)
         self.extra_headers.update({
             'X-SMTPAPI': json.dumps({
                 'unique_args': {
