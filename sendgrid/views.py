@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 import json
 
-from .models import EmailEvent
+from .models import Email
 
 
 class SendgridHook(View):
@@ -12,7 +12,7 @@ class SendgridHook(View):
     def post(self, request, *args, **kwargs):
         response = json.loads(request.raw_post_data)
         for event in response:
-            EmailEvent.objects.create(email=event['email'],
+            Email.objects.create(email=event['email'],
                                       event=event['event'],
                                       timestamp=event['timestamp'],
                                       uuid=event['uuid'])
