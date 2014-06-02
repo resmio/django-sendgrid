@@ -3,17 +3,21 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
 import json
+import datetime
 
 from .models import Email
+import signals
 
 
 class SendgridHook(View):
     @csrf_exempt
-    def post(self, request, *args, **kwargs):
-        response = json.loads(request.raw_post_data)
+    def post(self, request):
+        response = json.loads(request.body)
         for event in response:
-            Email.objects.create(email=event['email'],
-                                 event=event['event'],
-                                 timestamp=event['timestamp'],
-                                 uuid=event['uuid'])
+            email = Email.objects.get(uuid=event['uuid'])
+            email.email = event['email']
+            email.event = event['event']
+            email.timestamp = datetime.datetime.fromtimestamp(int(event['timestamp']))
+            email.save()
+            signals.email_event.send(email)
         return HttpResponse('Thanks!')
