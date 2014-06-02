@@ -13,7 +13,7 @@ class SendgridHook(View):
         response = json.loads(request.raw_post_data)
         for event in response:
             Email.objects.create(email=event['email'],
-                                      event=event['event'],
-                                      timestamp=event['timestamp'],
-                                      uuid=event['uuid'])
+                                 event=event['event'],
+                                 timestamp=event['timestamp'],
+                                 uuid=event['uuid'])
         return HttpResponse('Thanks!')
