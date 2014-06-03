@@ -3,6 +3,7 @@ from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.core import mail
 
 from sendgrid.utils import SendgridEmailMessage, SendgridEmailMultiAlternatives
+from sendgrid.models import Email
 
 import json
 
@@ -51,3 +52,33 @@ class UtilTestCase(TestCase):
         content = json.loads(mail.outbox[0].extra_headers['X-SMTPAPI'])
         self.assertIn('uuid', content['unique_args'])
         self.assertEqual(len(content['unique_args']['uuid']), 36)
+
+    def test_sendgrid_email_object_attachment(self):
+        # first send a message without an object
+        message = SendgridEmailMessage(**self.email_data)
+        message.send()
+        mail_event_1 = Email.objects.get(uuid=message.uuid)
+        self.assertEqual(mail_event_1.content_object, None)
+
+        # now attach an object
+        data = dict(self.email_data)
+        data['obj'] = mail_event_1  # code re-use :)
+        message = SendgridEmailMessage(**data)
+        message.send()
+        mail_event = Email.objects.get(uuid=message.uuid)
+        self.assertEqual(mail_event.content_object, mail_event_1)
+
+    def test_sendgrid_multipart_object_attachment(self):
+        # first send a message without an object
+        message = SendgridEmailMultiAlternatives(**self.email_data)
+        message.send()
+        mail_event_1 = Email.objects.get(uuid=message.uuid)
+        self.assertEqual(mail_event_1.content_object, None)
+
+        # now attach an object
+        data = dict(self.email_data)
+        data['obj'] = mail_event_1  # code re-use :)
+        message = SendgridEmailMultiAlternatives(**data)
+        message.send()
+        mail_event = Email.objects.get(uuid=message.uuid)
+        self.assertEqual(mail_event.content_object, mail_event_1)
