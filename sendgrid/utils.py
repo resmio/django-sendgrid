@@ -1,4 +1,6 @@
 from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.conf import settings
+from django.utils.timezone import utc
 
 import uuid
 import json
@@ -24,9 +26,14 @@ class SendgridEmailMessage(EmailMessage):
 
     def send(self, fail_silently=False):
         ret = super(SendgridEmailMessage, self).send(fail_silently)
+        if settings.USE_TZ:
+            now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        else:
+            now = datetime.now()
+
         data = {'uuid': self.uuid,
                 'email': str(self.to),
-                'timestamp': datetime.now(),
+                'timestamp': now,
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
@@ -51,9 +58,14 @@ class SendgridEmailMultiAlternatives(EmailMultiAlternatives):
 
     def send(self, fail_silently=False):
         ret = super(SendgridEmailMultiAlternatives, self).send(fail_silently)
+        if settings.USE_TZ:
+            now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        else:
+            now = datetime.now()
+
         data = {'uuid': self.uuid,
                 'email': str(self.to),
-                'timestamp': datetime.now(),
+                'timestamp': now,
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
