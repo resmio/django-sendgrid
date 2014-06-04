@@ -1,18 +1,40 @@
 #!/usr/bin/env python
 import sys
+import os
 
 import django
 from django.conf import settings
 
 
 if not settings.configured:
-    settings.configure(
-        DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': ':memory:',
+    # Choose database for settings
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:'
+        }
+    }
+
+    test_db = os.environ.get('DB', 'sqlite')
+
+    if test_db == 'mysql':
+        DATABASES['default'].update({
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'sendgrid',
+            'USER': 'root',
+        })
+    elif test_db == 'postgres':
+        DATABASES['default'].update({
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'USER': 'postgres',
+            'NAME': 'sendgrid',
+            'OPTIONS': {
+                'autocommit': True,
             }
-        },
+        })
+
+    settings.configure(
+        DATABASES=DATABASES,
         INSTALLED_APPS=(
             'django.contrib.contenttypes',
             'sendgrid',
