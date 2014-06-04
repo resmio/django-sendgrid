@@ -6,15 +6,17 @@ import json
 from sendgrid import utils, models
 
 
-class ViewTestCase(TestCase):
+class BaseTest(TestCase):
     def setUp(self):
-        super(ViewTestCase, self).setUp()
-        self.client = Client()
+        self.client = Client(enforce_csrf_checks=True)
         self.email_data = {'subject': 'Test Subject',
                            'body': 'Hi, I am a test body',
                            'from_email': 'email@example.com',
                            'to': ('other_email@example.com', )}
+        super(BaseTest, self).setUp()
 
+
+class ViewTestCase(BaseTest):
     def test_callback_view(self):
         """ Test email callback.
         """
@@ -90,15 +92,10 @@ class ViewNoTZTestCase(ViewTestCase):
         super(ViewNoTZTestCase, self).tearDown()
 
 
-class IgnoreMissingTestCase(TestCase):
+class IgnoreMissingTestCase(BaseTest):
     def setUp(self):
         super(IgnoreMissingTestCase, self).setUp()
         settings.SENDGRID_EVENTS_IGNORE_MISSING = True
-        self.client = Client()
-        self.email_data = {'subject': 'Test Subject',
-                           'body': 'Hi, I am a test body',
-                           'from_email': 'email@example.com',
-                           'to': ('other_email@example.com', )}
 
     def tearDown(self):
         del settings.SENDGRID_EVENTS_IGNORE_MISSING
