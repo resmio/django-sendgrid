@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core import mail
+from django.conf import settings
 
 from sendgrid.utils import SendgridEmailMessage, SendgridEmailMultiAlternatives
 from sendgrid.models import Email
@@ -81,3 +82,27 @@ class UtilTestCase(TestCase):
         message.send()
         mail_event = Email.objects.get(uuid=message.uuid)
         self.assertEqual(mail_event.content_object, mail_event_1)
+
+
+class UtilTZTestCase(UtilTestCase):
+    """ Test explicitly with USE_TZ enabled
+    """
+    def setUp(self):
+        self._old_use_tz = settings.USE_TZ
+        settings.USE_TZ = True
+        super(UtilTZTestCase, self).setUp()
+
+    def tearDown(self):
+        settings.USE_TZ = self._old_use_tz
+
+
+class UtilNoTZTestCase(UtilTestCase):
+    """ Test explicitly with USE_TZ disabled
+    """
+    def setUp(self):
+        self._old_use_tz = settings.USE_TZ
+        settings.USE_TZ = False
+        super(UtilNoTZTestCase, self).setUp()
+
+    def tearDown(self):
+        settings.USE_TZ = self._old_use_tz
