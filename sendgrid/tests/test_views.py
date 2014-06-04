@@ -167,4 +167,3 @@ class IgnoreMissingTestCase(BaseTest):
         # nothing should have changed
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
-
