@@ -1,4 +1,5 @@
 from django.views.generic import View
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils.timezone import utc
@@ -12,11 +13,8 @@ import signals
 
 
 class SendgridHook(View):
-    @csrf_exempt
-    def dispatch(self, *args, **kwargs):
-        return super(SendgridHook, self).dispatch(*args, **kwargs)
-
     @staticmethod
+    @method_decorator(csrf_exempt)
     def post(request):
         response = json.loads(request.body)
         for event in response:
