@@ -65,6 +65,28 @@ class ViewTestCase(BaseTest):
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
 
+    def test_callback_with_missing_data(self):
+        """ Test the callback view with erroneous data.
+        """
+        message = utils.SendgridEmailMessage(**self.email_data)
+        message.send()
+
+        # test initial email state
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
+
+        # simulate callback by sendgrid
+        with self.assertRaises(KeyError):
+            self.client.post('/sendgrid_callback/',
+                             data=json.dumps([{'email': 'other_email@example.com',
+                                               'event': 'processed',
+                                               'timestamp': '123456789', }, ]),
+                             content_type='application/json')
+
+        # nothing should have changed
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
+
 
 class ViewTZTestCase(ViewTestCase):
     """ Test explicitly with USE_TZ enabled
@@ -124,4 +146,25 @@ class IgnoreMissingTestCase(BaseTest):
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
 
+    def test_callback_with_missing_data(self):
+        message = utils.SendgridEmailMessage(**self.email_data)
+        message.send()
+
+        # test initial email state
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
+
+        # simulate callback by sendgrid
+        response = self.client.post('/sendgrid_callback/',
+                                    data=json.dumps([{
+                                        'email': 'other_email@example.com',
+                                        'event': 'processed',
+                                        'timestamp': '123456789',
+                                    }, ]),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # nothing should have changed
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
 

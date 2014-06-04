@@ -31,7 +31,7 @@ class SendgridHook(View):
                 email.timestamp = timestamp
                 email.save()
                 signals.email_event.send(email)
-            except Email.DoesNotExist:
+            except (Email.DoesNotExist, KeyError):
                 if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
                     raise
 
