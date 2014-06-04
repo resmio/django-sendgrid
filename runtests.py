@@ -43,6 +43,7 @@ if not settings.configured:
         SECRET_KEY='this-is-just-for-tests-so-not-that-secret',
         ROOT_URLCONF='sendgrid.urls',
         TIME_ZONE='UTC',  # so we can switch USE_TZ on and off in-flight with postgres
+        MIDDLEWARE_CLASSES=('django.middleware.csrf.CsrfViewMiddleware', )
     )
 
 
