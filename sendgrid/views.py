@@ -13,7 +13,11 @@ import signals
 
 class SendgridHook(View):
     @csrf_exempt
-    def post(self, request):
+    def dispatch(self, *args, **kwargs):
+        return super(SendgridHook, self).dispatch(*args, **kwargs)
+
+    @staticmethod
+    def post(request):
         response = json.loads(request.body)
         for event in response:
             try:
