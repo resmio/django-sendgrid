@@ -41,7 +41,8 @@ if not settings.configured:
         ),
         SITE_ID=1,
         SECRET_KEY='this-is-just-for-tests-so-not-that-secret',
-        ROOT_URLCONF='sendgrid.urls'
+        ROOT_URLCONF='sendgrid.urls',
+        TIME_ZONE='UTC',  # so we can switch USE_TZ on and off in-flight with postgres
     )
 
 
