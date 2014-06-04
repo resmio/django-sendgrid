@@ -19,9 +19,7 @@ env:
   - TOXENV=flake8
 
 install:
-  - pip install tox
-  - if [[ $DB == mysql ]]; then pip install -q mysql-python --use-mirrors; fi
-  - if [[ $DB == postgres ]]; then pip install -q psycopg2 --use-mirrors; fi
+  - pip install -q tox mysql-python psycopg2 --use-mirrors
 
 before_script:
   - mysql -e 'create database sendgrid;'
@@ -36,7 +34,6 @@ branches:
 
 matrix:
   allow_failures:
-    - env:
-      - TOXENV=py27-1.7.X
-      - TOXENV=py27-1.7.X DB=mysql
-      - TOXENV=py27-1.7.X DB=postgres
+    - env: TOXENV=py27-1.7.X
+    - env: TOXENV=py27-1.7.X DB=mysql
+    - env: TOXENV=py27-1.7.X DB=postgres
