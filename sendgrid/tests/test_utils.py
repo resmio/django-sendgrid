@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.core import mail
 
 from sendgrid.utils import SendgridEmailMessage, SendgridEmailMultiAlternatives
@@ -16,7 +15,7 @@ class UtilTestCase(TestCase):
                            'to': ('other_email@example.com', )}
 
     def test_django_email(self):
-        message = EmailMessage(**self.email_data)
+        message = mail.EmailMessage(**self.email_data)
         message.send()
         # this email should not have a UUID
         self.assertEqual(len(mail.outbox), 1)
@@ -24,7 +23,7 @@ class UtilTestCase(TestCase):
         self.assertNotIn('X-SMTPAPI', mail.outbox[0].extra_headers)
 
     def test_django_multipart(self):
-        message = EmailMultiAlternatives(**self.email_data)
+        message = mail.EmailMultiAlternatives(**self.email_data)
         message.send()
         # this email should not have a UUID
         self.assertEqual(len(mail.outbox), 1)
