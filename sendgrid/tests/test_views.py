@@ -41,25 +41,25 @@ class ViewTestCase(TestCase):
         self.assertEqual(models.Email.objects.all()[0].event, 'processed')
 
 
-class ViewTZTestcase(ViewTestCase):
+class ViewTZTestCase(ViewTestCase):
     """ Test explicitly with USE_TZ enabled
     """
     def setUp(self):
         self._old_use_tz = settings.USE_TZ
         settings.USE_TZ = True
-        super(ViewTZTestcase, self).setUp()
+        super(ViewTZTestCase, self).setUp()
 
     def tearDown(self):
         settings.USE_TZ = self._old_use_tz
 
 
-class ViewNoTZTestcase(ViewTestCase):
+class ViewNoTZTestCase(ViewTestCase):
     """ Test explicitly with USE_TZ disabled
     """
     def setUp(self):
         self._old_use_tz = settings.USE_TZ
         settings.USE_TZ = False
-        super(ViewNoTZTestcase, self).setUp()
+        super(ViewNoTZTestCase, self).setUp()
 
     def tearDown(self):
         settings.USE_TZ = self._old_use_tz
