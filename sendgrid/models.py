@@ -17,7 +17,12 @@ class Email(models.Model):
     email = models.CharField(_('addressee'), max_length=512)
     event = models.CharField(_('event type'), max_length=32)
     timestamp = models.DateTimeField(_('timestamp'))
-    uuid = models.CharField(_('reference UUID'), max_length=64, default=lambda: str(uuid.uuid4()))
+    uuid = models.CharField(_('reference UUID'), max_length=64, default=lambda: str(uuid.uuid4()), db_index=True)
 
     def __unicode__(self):
         return '%s: %s' % (self.email, self.event)
+
+    class Meta:
+        index_together = [
+            ['content_type', 'object_id'],
+        ]
