@@ -87,6 +87,98 @@ class ViewTestCase(BaseTest):
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
 
+    def test_wrong_transition(self):
+        """ Test what happens if we try to do a wrong state transition
+        """
+        message = utils.SendgridEmailMessage(**self.email_data)
+        message.send()
+
+        # test initial email state
+        self.assertEqual(models.Email.objects.count(), 1)
+        _mail = models.Email.objects.all()[0]
+        self.assertEqual(_mail.event, 'initiated')
+
+        _mail.event = 'bounce'
+        _mail.save()
+
+        # simulate callback by sendgrid
+        response = self.client.post('/sendgrid_callback/',
+                                    data=json.dumps([{
+                                        'email': 'other_email@example.com',
+                                        'uuid': message.uuid,
+                                        'event': 'processed',
+                                        'timestamp': '123456789',
+                                    }, ]),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # nothing should have changed
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'bounce')
+
+    def test_state_transitions(self):
+        """ Test normal state transitions.
+        """
+        message = utils.SendgridEmailMessage(**self.email_data)
+        message.send()
+
+        # test initial email state
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
+
+        # simulate callback by sendgrid
+        response = self.client.post('/sendgrid_callback/',
+                                    data=json.dumps([{
+                                        'email': 'other_email@example.com',
+                                        'uuid': message.uuid,
+                                        'event': 'processed',
+                                        'timestamp': '123456789',
+                                    }, ]),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # this should have modified the existing email model
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'processed')
+
+        # simulate next callback by sendgrid
+        response = self.client.post('/sendgrid_callback/',
+                                    data=json.dumps([{
+                                        'email': 'other_email@example.com',
+                                        'uuid': message.uuid,
+                                        'event': 'delivered',
+                                        'timestamp': '123459999',
+                                    }, ]),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # this should have modified the existing email model
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'delivered')
+
+    def test_wrong_saved_state(self):
+        """ Test what happens if we saved a non-existent state in our email
+        """
+        message = utils.SendgridEmailMessage(**self.email_data)
+        message.send()
+
+        # test initial email state
+        self.assertEqual(models.Email.objects.count(), 1)
+        _mail = models.Email.objects.all()[0]
+        self.assertEqual(_mail.event, 'initiated')
+
+        _mail.event = 'bacon'
+        _mail.save()
+
+        # simulate callback by sendgrid
+        with self.assertRaises(KeyError):
+            self.client.post('/sendgrid_callback/',
+                             data=json.dumps([{'email': 'other_email@example.com',
+                                               'uuid': message.uuid,
+                                               'event': 'processed',
+                                               'timestamp': '123456789', }, ]),
+                             content_type='application/json')
+
 
 class ViewTZTestCase(ViewTestCase):
     """ Test explicitly with USE_TZ enabled.
@@ -175,3 +267,32 @@ class IgnoreMissingTestCase(BaseTest):
         # nothing should have changed
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
+
+    def test_wrong_saved_state(self):
+        """ Test what happens if we saved a non-existent state in our email
+        """
+        message = utils.SendgridEmailMessage(**self.email_data)
+        message.send()
+
+        # test initial email state
+        self.assertEqual(models.Email.objects.count(), 1)
+        _mail = models.Email.objects.all()[0]
+        self.assertEqual(_mail.event, 'initiated')
+
+        _mail.event = 'bacon'
+        _mail.save()
+
+        # simulate callback by sendgrid
+        response = self.client.post('/sendgrid_callback/',
+                                    data=json.dumps([{
+                                        'email': 'other_email@example.com',
+                                        'uuid': message.uuid,
+                                        'event': 'processed',
+                                        'timestamp': '123456789',
+                                    }, ]),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # nothing should have changed
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'bacon')

@@ -13,18 +13,51 @@ import signals
 
 
 class SendgridHook(View):
+    state_flow = {
+        # Internal: Step 0
+        'initiated': ('received', 'processed', 'dropped', 'delivered', 'bounce', 'open', 'click', 'unsubscribe',
+                      'spamreport'),
+        # Sendgrid: Step 1 - Receive
+        'received': ('processed', 'dropped', 'delivered', 'bounce', 'open', 'click', 'unsubscribe', 'spamreport'),
+        # Sendgrid: Step 2 - Process
+        'processed': ('delivered', 'bounce', 'open', 'click', 'unsubscribe', 'spamreport'),
+        'dropped': (),
+        # Sendgrid: Step 3 - Deliver
+        'delivered': ('open', 'click', 'unsubscribe', 'spamreport'),
+        'bounce': (),
+        # Sendgrid: Step 4 - Read
+        'open': (),
+        'click': (),
+        'unsubscribe': (),
+        'spamreport': (),
+    }
+
+    def __assign_state(self, email, event):
+        try:
+            current_options = self.state_flow[email.event]
+            if event in current_options:
+                email.event = event
+            else:
+                pass
+                # XXX log that callbacks arrive in the wrong order
+        except KeyError:
+            if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
+                raise
+            else:
+                pass
+                # XXX log that we are in an unknown state and most likely something is wrong (or the API got updated)
+
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(SendgridHook, self).dispatch(*args, **kwargs)
 
-    @staticmethod
-    def post(request):
+    def post(self, request):
         response = json.loads(request.body)
         for event in response:
             try:
                 email = Email.objects.get(uuid=event['uuid'])
                 email.email = event['email']
-                email.event = event['event']
+                self.__assign_state(email, event['event'])
                 timestamp = datetime.datetime.fromtimestamp(int(event['timestamp']))
                 if settings.USE_TZ:
                     timestamp = timestamp.utcnow().replace(tzinfo=utc)
