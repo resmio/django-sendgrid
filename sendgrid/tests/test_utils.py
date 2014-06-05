@@ -16,6 +16,8 @@ class UtilTestCase(TestCase):
                            'to': ('other_email@example.com', )}
 
     def test_django_email(self):
+        """ Test if we break default django email sending.
+        """
         message = mail.EmailMessage(**self.email_data)
         message.send()
         # this email should not have a UUID
@@ -24,6 +26,8 @@ class UtilTestCase(TestCase):
         self.assertNotIn('X-SMTPAPI', mail.outbox[0].extra_headers)
 
     def test_django_multipart(self):
+        """ Test if we break default django email sending.
+        """
         message = mail.EmailMultiAlternatives(**self.email_data)
         message.send()
         # this email should not have a UUID
@@ -32,6 +36,8 @@ class UtilTestCase(TestCase):
         self.assertNotIn('X-SMTPAPI', mail.outbox[0].extra_headers)
 
     def test_sendgrid_email(self):
+        """ Test if we can send emails using our own class.
+        """
         message = SendgridEmailMessage(**self.email_data)
         message.send()
         # this email should have a UUID
@@ -43,6 +49,8 @@ class UtilTestCase(TestCase):
         self.assertEqual(len(content['unique_args']['uuid']), 36)
 
     def test_sendgrid_multipart(self):
+        """ Test if we can send emails using our own class.
+        """
         message = SendgridEmailMultiAlternatives(**self.email_data)
         message.send()
         # this email should have a UUID
@@ -54,6 +62,8 @@ class UtilTestCase(TestCase):
         self.assertEqual(len(content['unique_args']['uuid']), 36)
 
     def test_sendgrid_email_object_attachment(self):
+        """ Test attaching a related object to the email.
+        """
         # first send a message without an object
         message = SendgridEmailMessage(**self.email_data)
         message.send()
@@ -69,6 +79,8 @@ class UtilTestCase(TestCase):
         self.assertEqual(mail_event.content_object, mail_event_1)
 
     def test_sendgrid_multipart_object_attachment(self):
+        """ Test attaching a related object to the email.
+        """
         # first send a message without an object
         message = SendgridEmailMultiAlternatives(**self.email_data)
         message.send()

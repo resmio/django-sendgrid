@@ -89,7 +89,7 @@ class ViewTestCase(BaseTest):
 
 
 class ViewTZTestCase(ViewTestCase):
-    """ Test explicitly with USE_TZ enabled
+    """ Test explicitly with USE_TZ enabled.
     """
     def setUp(self):
         self._old_use_tz = settings.USE_TZ
@@ -102,7 +102,7 @@ class ViewTZTestCase(ViewTestCase):
 
 
 class ViewNoTZTestCase(ViewTestCase):
-    """ Test explicitly with USE_TZ disabled
+    """ Test explicitly with USE_TZ disabled.
     """
     def setUp(self):
         self._old_use_tz = settings.USE_TZ
@@ -115,6 +115,8 @@ class ViewNoTZTestCase(ViewTestCase):
 
 
 class IgnoreMissingTestCase(BaseTest):
+    """ Test cases for SENDGRID_EVENTS_IGNORE_MISSING enabled.
+    """
     def setUp(self):
         super(IgnoreMissingTestCase, self).setUp()
         settings.SENDGRID_EVENTS_IGNORE_MISSING = True
@@ -124,6 +126,8 @@ class IgnoreMissingTestCase(BaseTest):
         super(IgnoreMissingTestCase, self).tearDown()
 
     def test_callback_view_lenient_errors(self):
+        """ Test callback using a non-existent, malformed UUID.
+        """
         message = utils.SendgridEmailMessage(**self.email_data)
         message.send()
 
@@ -147,6 +151,10 @@ class IgnoreMissingTestCase(BaseTest):
         self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
 
     def test_callback_with_missing_data(self):
+        """ Test callback with missing data (no UUID).
+
+        This is the default case if emails are not sent with our Classes
+        """
         message = utils.SendgridEmailMessage(**self.email_data)
         message.send()
 
