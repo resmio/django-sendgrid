@@ -6,6 +6,8 @@ import django
 
 import uuid
 
+import signals
+
 
 class Email(models.Model):
     created = models.DateTimeField(_('created'), auto_now_add=True)
@@ -28,3 +30,17 @@ class Email(models.Model):
             index_together = [
                 ['content_type', 'object_id'],
             ]
+
+    def save(self, *args, **kwargs):
+        # check if we're just creating the object
+        if not self.pk:
+            creation = True
+        else:
+            creation = False
+
+        # then actually save it
+        super(Email, self).save(*args, **kwargs)
+
+        # and send out a proper signal with an instance of the saved model
+        if creation:
+            signals.email_event.send(self)

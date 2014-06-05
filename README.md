@@ -5,8 +5,8 @@ Introduction
 
 This django app enables you to send emails to sendgrid and receive callbacks to monitor the status of all your emails. 
 You can also attach them to a related object in your own app. A signal will be dispatched every time a new callback is
-received. We also provide helper classes which inherit from the email classes in `django.core.mail` which means you can
-transparently switch out the django classes with ours. 
+received (and also when the email is created for the first time). We also provide helper classes which inherit from the 
+email classes in `django.core.mail` which means you can transparently switch out the django classes with ours. 
 
 Installation
 ============
@@ -71,5 +71,5 @@ You can also attach a related object to the `Email` object by passing an `obj` p
 Signals
 -------
 
-Every time a callback is received, the signal `sendgrid.signals.email_event` is dispatched. See 
-https://docs.djangoproject.com/en/dev/topics/signals/ for more details on Django signals.
+Every time a new object is created or a callback is received, the signal `sendgrid.signals.email_event` is dispatched.
+See https://docs.djangoproject.com/en/dev/topics/signals/ for more details on Django signals.
