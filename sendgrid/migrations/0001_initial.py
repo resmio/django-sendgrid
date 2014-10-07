@@ -22,7 +22,8 @@ class Migration(migrations.Migration):
                 ('email', models.CharField(max_length=512, verbose_name='addressee')),
                 ('event', models.CharField(max_length=32, verbose_name='event type')),
                 ('timestamp', models.DateTimeField(verbose_name='timestamp')),
-                ('uuid', models.CharField(default=sendgrid.models._new_uuid, max_length=64, verbose_name='reference UUID', db_index=True)),
+                ('uuid', models.CharField(default=sendgrid.models._new_uuid, max_length=64,
+                                          verbose_name='reference UUID', db_index=True)),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType', null=True)),
             ],
             options={
