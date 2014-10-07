@@ -32,21 +32,6 @@ class SendgridHook(View):
         'spamreport': (),
     }
 
-    def __assign_state(self, email, event):
-        try:
-            current_options = self.state_flow[email.event]
-            if event in current_options:
-                email.event = event
-            else:
-                pass
-                # XXX log that callbacks arrive in the wrong order
-        except KeyError:
-            if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
-                raise
-            else:
-                pass
-                # XXX log that we are in an unknown state and most likely something is wrong (or the API got updated)
-
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(SendgridHook, self).dispatch(*args, **kwargs)
@@ -57,7 +42,20 @@ class SendgridHook(View):
             try:
                 email = Email.objects.get(uuid=event['uuid'])
                 email.email = event['email']
-                self.__assign_state(email, event['event'])
+                try:
+                    current_options = self.state_flow[email.event]
+                    if event['event'] in current_options:
+                        email.event = event['event']
+                    else:
+                        continue
+                        # XXX log that callbacks arrive in the wrong order or are duplicates
+                except KeyError:
+                    if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
+                        raise
+                    else:
+                        pass
+                        # XXX log that we are in an unknown state and most likely something is wrong
+                        #     (or the API got updated)
                 timestamp = datetime.datetime.fromtimestamp(int(event['timestamp']))
                 if settings.USE_TZ:
                     timestamp = timestamp.utcnow().replace(tzinfo=utc)
