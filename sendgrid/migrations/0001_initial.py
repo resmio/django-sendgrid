@@ -1,62 +1,36 @@
 # -*- coding: utf-8 -*-
-from south.db import db
-from south.v2 import SchemaMigration
-import django
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import sendgrid.models
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Email'
-        db.create_table(u'sendgrid_email', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'],
-                                                                                   null=True)),
-            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True)),
-            ('email', self.gf('django.db.models.fields.CharField')(max_length=512)),
-            ('event', self.gf('django.db.models.fields.CharField')(max_length=32)),
-            ('timestamp', self.gf('django.db.models.fields.DateTimeField')()),
-            ('uuid', self.gf('django.db.models.fields.CharField')(max_length=64, db_index=True)),
-        ))
-        db.send_create_signal(u'sendgrid', ['Email'])
+    dependencies = [
+        ('django', '__first__'),
+    ]
 
-        if django.VERSION[0] == 1 and django.VERSION[1] > 4:
-            # Adding index on 'Email', fields ['content_type', 'object_id']
-            db.create_index(u'sendgrid_email', ['content_type_id', 'object_id'])
-
-    @staticmethod
-    def backwards(orm):
-        if django.VERSION[0] == 1 and django.VERSION[1] > 4:
-            # Removing index on 'Email', fields ['content_type', 'object_id']
-            db.delete_index(u'sendgrid_email', ['content_type_id', 'object_id'])
-
-        # Deleting model 'Email'
-        db.delete_table(u'sendgrid_email')
-
-    models = {
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)",
-                     'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'sendgrid.email': {
-            'Meta': {'object_name': 'Email', 'index_together': "[['content_type', 'object_id']]"},
-            'content_type': ('django.db.models.fields.related.ForeignKey', [],
-                             {'to': u"orm['contenttypes.ContentType']", 'null': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'email': ('django.db.models.fields.CharField', [], {'max_length': '512'}),
-            'event': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
-            'timestamp': ('django.db.models.fields.DateTimeField', [], {}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'uuid': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_index': 'True'})
-        }
-    }
-
-    complete_apps = ['sendgrid']
+    operations = [
+        migrations.CreateModel(
+            name='Email',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True, verbose_name='created')),
+                ('updated', models.DateTimeField(auto_now=True, verbose_name='updated')),
+                ('object_id', models.PositiveIntegerField(null=True)),
+                ('email', models.CharField(max_length=512, verbose_name='addressee')),
+                ('event', models.CharField(max_length=32, verbose_name='event type')),
+                ('timestamp', models.DateTimeField(verbose_name='timestamp')),
+                ('uuid', models.CharField(default=sendgrid.models._new_uuid, max_length=64, verbose_name='reference UUID', db_index=True)),
+                ('content_type', models.ForeignKey(to='django.ContentType', null=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AlterIndexTogether(
+            name='email',
+            index_together=set([('content_type', 'object_id')]),
+        ),
+    ]

@@ -9,6 +9,12 @@ import uuid
 import signals
 
 
+def _new_uuid():
+    """Initialisation function for reference UUID."""
+
+    return str(uuid.uuid4())
+
+
 class Email(models.Model):
     created = models.DateTimeField(_('created'), auto_now_add=True)
     updated = models.DateTimeField(_('updated'), auto_now=True)
@@ -20,7 +26,7 @@ class Email(models.Model):
     email = models.CharField(_('addressee'), max_length=512)
     event = models.CharField(_('event type'), max_length=32)
     timestamp = models.DateTimeField(_('timestamp'))
-    uuid = models.CharField(_('reference UUID'), max_length=64, default=lambda: str(uuid.uuid4()), db_index=True)
+    uuid = models.CharField(_('reference UUID'), max_length=64, default=_new_uuid, db_index=True)
 
     def __unicode__(self):
         return '%s: %s' % (self.email, self.event)
