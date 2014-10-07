@@ -25,6 +25,7 @@ class Email(models.Model):
 
     email = models.CharField(_('addressee'), max_length=512)
     event = models.CharField(_('event type'), max_length=32)
+    reason = models.CharField(_('reason'), max_length=1024, default='')
     timestamp = models.DateTimeField(_('timestamp'))
     uuid = models.CharField(_('reference UUID'), max_length=64, default=_new_uuid, db_index=True)
 

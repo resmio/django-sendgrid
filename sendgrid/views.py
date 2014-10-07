@@ -42,6 +42,8 @@ class SendgridHook(View):
             try:
                 email = Email.objects.get(uuid=event['uuid'])
                 email.email = event['email']
+                email.reason = event.get('reason', '')
+
                 try:
                     current_options = self.state_flow[email.event]
                     if event['event'] in current_options:
