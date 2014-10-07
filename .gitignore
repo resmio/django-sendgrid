@@ -10,3 +10,5 @@
 *.egg-info/*
 docs/_build/*
 dist/*
+/settings.py
+/manage.py
