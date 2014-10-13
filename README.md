@@ -17,8 +17,17 @@ Installation
  ```python
  INSTALLED_APPS += 'sendgrid'
  ```
-3. Run `python manage.py syncdb` to install the new Email model
-4. Include `sendgrid.urls` at some point in your url structure. E.g. in `/urls.py`:
+3. South compatibility (Django < 1.7)
+
+ If you're using Django >= 1.7 you don't have to do anything, for users with older versions, South tries to use the new Django migrations instead of the South migrations. Please add the following code snippet to your settings:
+
+ ```python
+  SOUTH_MIGRATION_MODULES = {
+         'sendgrid': 'sendgrid.south_migrations',
+     }
+ ```
+4. Run `python manage.py syncdb` to install the new Email model
+5. Include `sendgrid.urls` at some point in your url structure. E.g. in `/urls.py`:
 
  ```python
  # Sendgrid event hooks
@@ -29,8 +38,8 @@ Installation
  ```
  
  This will add the callback path `/sendgrid_callback/`.
-5. Go to https://sendgrid.com/app and add the App `Event Notification`.
-6. Configure the App to send the events you'd like to and add the Callback URL. If you included `sendgrid.urls` like 
+6. Go to https://sendgrid.com/app and add the App `Event Notification`.
+7. Configure the App to send the events you'd like to and add the Callback URL. If you included `sendgrid.urls` like 
  mentioned above it would be : `http://test.com/sendgrid_callback/`
 
 Configuration
