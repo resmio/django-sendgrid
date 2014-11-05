@@ -156,6 +156,32 @@ class ViewTestCase(BaseTest):
         self.assertEqual(models.Email.objects.count(), 1)
         self.assertEqual(models.Email.objects.all()[0].event, 'delivered')
 
+    def test_null_reason(self):
+        """ Test what happens if we send a null value as a reason, opposed to a missing reason.
+        """
+        message = utils.SendgridEmailMessage(**self.email_data)
+        message.send()
+
+        # test initial email state
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'initiated')
+
+        # simulate callback by sendgrid
+        response = self.client.post('/sendgrid_callback/',
+                                    data=json.dumps([{
+                                        'email': 'other_email@example.com',
+                                        'uuid': message.uuid,
+                                        'event': 'processed',
+                                        'timestamp': '123456789',
+                                        'reason': None,
+                                    }, ]),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        # this should have modified the existing email model
+        self.assertEqual(models.Email.objects.count(), 1)
+        self.assertEqual(models.Email.objects.all()[0].event, 'processed')
+
     def test_wrong_saved_state(self):
         """ Test what happens if we saved a non-existent state in our email
         """
