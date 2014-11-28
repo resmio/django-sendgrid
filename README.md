@@ -19,7 +19,7 @@ Installation
  ```
 3. South compatibility (Django < 1.7)
 
- If you're using Django >= 1.7 you don't have to do anything, for users with older versions, South tries to use the new Django migrations instead of the South migrations. Please add the following code snippet to your settings:
+ If you're using Django >= 1.7 you don't have to do anything. For users with older versions, South tries to use the new Django migrations instead of the South migrations. Please add the following code snippet to your settings:
 
  ```python
   SOUTH_MIGRATION_MODULES = {
