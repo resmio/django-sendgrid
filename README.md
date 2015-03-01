@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/resmio/django-sendgrid.png)](https://travis-ci.org/resmio/django-sendgrid)
+[![Build Status](https://api.travis-ci.org/resmio/django-sendgrid.png)](https://travis-ci.org/resmio/django-sendgrid) [![Join the chat at https://gitter.im/resmio/django-sendgrid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/resmio/django-sendgrid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Introduction
 ============
