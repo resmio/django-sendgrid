@@ -3,6 +3,8 @@
 Introduction
 ============
 
+[![Join the chat at https://gitter.im/resmio/django-sendgrid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/resmio/django-sendgrid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This django app enables you to send emails to sendgrid and receive callbacks to monitor the status of all your emails. 
 You can also attach them to a related object in your own app. A signal will be dispatched every time a new callback is
 received (and also when the email is created for the first time). We also provide helper classes which inherit from the 
