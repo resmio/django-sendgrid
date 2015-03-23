@@ -6,6 +6,7 @@ from sendgrid.utils import SendgridEmailMessage, SendgridEmailMultiAlternatives
 from sendgrid.models import Email
 
 import json
+from copy import copy
 
 
 class UtilTestCase(TestCase):
@@ -94,6 +95,46 @@ class UtilTestCase(TestCase):
         message.send()
         mail_event = Email.objects.get(uuid=message.uuid)
         self.assertEqual(mail_event.content_object, mail_event_1)
+
+    def test_email_headers(self):
+        """ Test if we handle custom headers correctly.
+        """
+        # Add a custom extra_header field
+        mail_data = copy(self.email_data)
+        mail_data.update({'headers': {'X-AWESOME': 42, }})
+
+        message = SendgridEmailMessage(**mail_data)
+        message.send()
+        # this email should have a UUID
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('X-SMTPAPI', mail.outbox[0].extra_headers)
+
+        content = json.loads(mail.outbox[0].extra_headers['X-SMTPAPI'])
+        self.assertIn('uuid', content['unique_args'])
+        self.assertEqual(len(content['unique_args']['uuid']), 36)
+
+        self.assertEqual(mail.outbox[0].extra_headers['X-AWESOME'], 42)
+
+    def test_smtpapi_headers(self):
+        """ Test if we handle existing SMTPAPI headers correctly.
+        """
+        # Add a custom extra_header field
+        mail_data = copy(self.email_data)
+        mail_data.update({'headers': {
+            'X-AWESOME': 42,
+            'X-SMTPAPI': json.dumps({'amazing': 'stuff'})}})
+
+        message = SendgridEmailMessage(**mail_data)
+        message.send()
+        # this email should have a UUID
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('X-SMTPAPI', mail.outbox[0].extra_headers)
+
+        content = json.loads(mail.outbox[0].extra_headers['X-SMTPAPI'])
+        self.assertIn('uuid', content['unique_args'])
+        self.assertEqual(len(content['unique_args']['uuid']), 36)
+        self.assertEqual(content['amazing'], 'stuff')
+        self.assertEqual(mail.outbox[0].extra_headers['X-AWESOME'], 42)
 
 
 class UtilTZTestCase(UtilTestCase):
