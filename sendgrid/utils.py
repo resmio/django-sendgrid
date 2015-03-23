@@ -16,12 +16,20 @@ class SendgridEmailMessage(EmailMessage):
                                                    headers, cc)
         self.obj = obj
         self.uuid = str(uuid.uuid4())
+
+        # Update the X-SMTPAPI header with our unique arguments (or create it)
+        if headers is not None and headers.get('X-SMTPAPI'):
+            try:
+                api_dict = json.loads(headers['X-SMTPAPI'])
+            except ValueError:
+                api_dict = {}
+        else:
+            api_dict = {}
+        unique_args = api_dict.setdefault('unique_args', {})
+        unique_args['uuid'] = self.uuid
+
         self.extra_headers.update({
-            'X-SMTPAPI': json.dumps({
-                'unique_args': {
-                    'uuid': self.uuid,
-                }
-            })
+            'X-SMTPAPI': json.dumps(api_dict)
         })
 
     def send(self, fail_silently=False):
@@ -48,12 +56,20 @@ class SendgridEmailMultiAlternatives(EmailMultiAlternatives):
                                                              attachments, headers, cc)
         self.obj = obj
         self.uuid = str(uuid.uuid4())
+
+        # Update the X-SMTPAPI header with our unique arguments (or create it)
+        if headers is not None and headers.get('X-SMTPAPI'):
+            try:
+                api_dict = json.loads(headers['X-SMTPAPI'])
+            except ValueError:
+                api_dict = {}
+        else:
+            api_dict = {}
+        unique_args = api_dict.setdefault('unique_args', {})
+        unique_args['uuid'] = self.uuid
+
         self.extra_headers.update({
-            'X-SMTPAPI': json.dumps({
-                'unique_args': {
-                    'uuid': self.uuid,
-                }
-            })
+            'X-SMTPAPI': json.dumps(api_dict)
         })
 
     def send(self, fail_silently=False):
