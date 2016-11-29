@@ -36,7 +36,3 @@ before_script:
 
 script:
     - tox
-
-branches:
-  only:
-    - master
