@@ -1,8 +1,13 @@
 from django.db import models
-from django.contrib.contenttypes.generic import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 import django
+
+try:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.contrib.contenttypes.models import ContentType
+except ImportError:  # Django < 1.9
+    from django.contrib.contenttypes.generic import GenericForeignKey
+    from django.contrib.contenttypes.models import ContentType
 
 import uuid
 
