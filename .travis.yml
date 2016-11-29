@@ -8,18 +8,27 @@ env:
   - TOXENV=py27-1.5.X
   - TOXENV=py27-1.6.X
   - TOXENV=py27-1.7.X
+  - TOXENV=py27-1.8.X
+  - TOXENV=py27-1.9.X
+  - TOXENV=py27-1.10.X
   - TOXENV=py27-1.4.X DB=mysql
   - TOXENV=py27-1.5.X DB=mysql
   - TOXENV=py27-1.6.X DB=mysql
   - TOXENV=py27-1.7.X DB=mysql
+  - TOXENV=py27-1.8.X DB=mysql
+  - TOXENV=py27-1.9.X DB=mysql
+  - TOXENV=py27-1.10.X DB=mysql
   - TOXENV=py27-1.4.X DB=postgres
   - TOXENV=py27-1.5.X DB=postgres
   - TOXENV=py27-1.6.X DB=postgres
   - TOXENV=py27-1.7.X DB=postgres
+  - TOXENV=py27-1.8.X DB=postgres
+  - TOXENV=py27-1.9.X DB=postgres
+  - TOXENV=py27-1.10.X DB=postgres
   - TOXENV=flake8
 
 install:
-  - pip install -q tox --use-mirrors
+  - pip install -q tox
 
 before_script:
   - mysql -e 'create database sendgrid;'
@@ -27,7 +36,3 @@ before_script:
 
 script:
     - tox
-
-branches:
-  only:
-    - master
