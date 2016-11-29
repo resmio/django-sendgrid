@@ -28,7 +28,7 @@ env:
   - TOXENV=flake8
 
 install:
-  - pip install -q tox --use-mirrors
+  - pip install -q tox
 
 before_script:
   - mysql -e 'create database sendgrid;'
