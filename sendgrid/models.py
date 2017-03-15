@@ -11,7 +11,7 @@ except ImportError:  # Django < 1.9
 
 import uuid
 
-import signals
+from .signals import email_event
 
 
 def _new_uuid():
@@ -55,4 +55,4 @@ class Email(models.Model):
 
         # and send out a proper signal with an instance of the saved model
         if creation:
-            signals.email_event.send(self)
+            email_event.send(self)

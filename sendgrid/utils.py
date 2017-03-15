@@ -6,7 +6,7 @@ import uuid
 import json
 from datetime import datetime
 
-import models
+from .models import Email
 
 
 class SendgridEmailMessage(EmailMessage):
@@ -45,7 +45,7 @@ class SendgridEmailMessage(EmailMessage):
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
-        models.Email.objects.create(**data)
+        Email.objects.create(**data)
         return ret
 
 
@@ -85,5 +85,5 @@ class SendgridEmailMultiAlternatives(EmailMultiAlternatives):
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
-        models.Email.objects.create(**data)
+        Email.objects.create(**data)
         return ret

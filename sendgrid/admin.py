@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-import models
+from .models import Email
 
 
-admin.site.register(models.Email)
+admin.site.register(Email)

@@ -1,6 +1,7 @@
 *.py[co]
 .project
 .pydevproject
+.idea
 *~
 *.db
 *.orig
