@@ -9,7 +9,7 @@ import json
 import datetime
 
 from .models import Email
-import signals
+from .signals import email_event
 
 
 class SendgridHook(View):
@@ -65,7 +65,7 @@ class SendgridHook(View):
                     timestamp = timestamp.utcnow().replace(tzinfo=utc)
                 email.timestamp = timestamp
                 email.save()
-                signals.email_event.send(email)
+                email_event.send(email)
             except (Email.DoesNotExist, KeyError):
                 if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
                     raise
