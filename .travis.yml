@@ -1,37 +1,65 @@
 language: python
 
-python:
-  - "2.7"
-  - "3.6"
+#env:
 
-env:
-  - TOXENV=py27-1.4.X
-  - TOXENV=py27-1.5.X
-  - TOXENV=py27-1.6.X
-  - TOXENV=py27-1.7.X
-  - TOXENV=py27-1.8.X
-  - TOXENV=py27-1.9.X
-  - TOXENV=py27-1.10.X
-  - TOXENV=py27-1.4.X DB=mysql
-  - TOXENV=py27-1.5.X DB=mysql
-  - TOXENV=py27-1.6.X DB=mysql
-  - TOXENV=py27-1.7.X DB=mysql
-  - TOXENV=py27-1.8.X DB=mysql
-  - TOXENV=py27-1.9.X DB=mysql
-  - TOXENV=py27-1.10.X DB=mysql
-  - TOXENV=py36-1.10.X DB=mysql
-  - TOXENV=py27-1.4.X DB=postgres
-  - TOXENV=py27-1.5.X DB=postgres
-  - TOXENV=py27-1.6.X DB=postgres
-  - TOXENV=py27-1.7.X DB=postgres
-  - TOXENV=py27-1.8.X DB=postgres
-  - TOXENV=py27-1.9.X DB=postgres
-  - TOXENV=py27-1.10.X DB=postgres
-  - TOXENV=py36-1.10.X DB=postgres
-  - TOXENV=flake8
+#  - TOXENV=flake8
+
+
+matrix:
+  include:
+    - python: 2.7
+      env: TOXENV=py27-1.4.X
+    - python: 2.7
+      env: TOXENV=py27-1.5.X
+    - python: 2.7
+      env: TOXENV=py27-1.6.X
+    - python: 2.7
+      env: TOXENV=py27-1.7.X
+    - python: 2.7
+      env: TOXENV=py27-1.8.X
+    - python: 2.7
+      env: TOXENV=py27-1.9.X
+    - python: 2.7
+      env: TOXENV=py27-1.10.X
+    - python: 2.7
+      env: TOXENV=py27-1.4.X DB=mysql
+    - python: 2.7
+      env: TOXENV=py27-1.5.X DB=mysql
+    - python: 2.7
+      env: TOXENV=py27-1.6.X DB=mysql
+    - python: 2.7
+      env: TOXENV=py27-1.7.X DB=mysql
+    - python: 2.7
+      env: TOXENV=py27-1.8.X DB=mysql
+    - python: 2.7
+      env: TOXENV=py27-1.9.X DB=mysql
+    - python: 2.7
+      env: TOXENV=py27-1.10.X DB=mysql
+    - python: 2.7
+      env: TOXENV=py27-1.4.X DB=postgres
+    - python: 2.7
+      env: TOXENV=py27-1.5.X DB=postgres
+    - python: 2.7
+      env: TOXENV=py27-1.6.X DB=postgres
+    - python: 2.7
+      env: TOXENV=py27-1.7.X DB=postgres
+    - python: 2.7
+      env: TOXENV=py27-1.8.X DB=postgres
+    - python: 2.7
+      env: TOXENV=py27-1.9.X DB=postgres
+    - python: 2.7
+      env: TOXENV=py27-1.10.X DB=postgres
+
+    - python: 3.6
+      env: TOXENV=py36-1.10.X DB=mysql
+    - python: 3.6
+      env: TOXENV=py36-1.10.X DB=postgres
+
+    - python: 2.7
+      env: TOXENV=flake8
 
 install:
-  - pip install -q tox-travis
+  - pip install -q tox
 
 before_script:
   - mysql -e 'create database sendgrid;'
