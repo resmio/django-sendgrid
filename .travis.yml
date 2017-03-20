@@ -31,7 +31,7 @@ env:
   - TOXENV=flake8
 
 install:
-  - pip install -q tox
+  - pip install -q tox-travis
 
 before_script:
   - mysql -e 'create database sendgrid;'
