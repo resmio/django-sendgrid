@@ -58,6 +58,10 @@ sent without a UUID. This is very helpful because Sendgrid would otherwise recei
 and would try to re-deliver the same message for 24h until giving up sending messages altogether. So unless you're 
 very sure this will never happen, you should probably enable this.
 
+Adding `SENDGRID_EVENTS_IGNORE_MISSING = 'some.module.function'` to your settings allows you to intercept the normal
+handling of the requests and allows you to modify its behaviour entirely. You can also use this hook to redirect the
+handling to some async task, e.g. celery
+
 Usage
 =====
 

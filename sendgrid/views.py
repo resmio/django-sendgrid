@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils.timezone import utc
 from django.conf import settings
+from django.utils.module_loading import import_string
 
 import json
 import datetime
@@ -36,8 +37,9 @@ class SendgridHook(View):
     def dispatch(self, *args, **kwargs):
         return super(SendgridHook, self).dispatch(*args, **kwargs)
 
-    def post(self, request):
-        response = json.loads(request.body)
+    @staticmethod
+    def handle_event(body):
+        response = json.loads(body)
         for event in response:
             try:
                 email = Email.objects.get(uuid=event['uuid'])
@@ -47,7 +49,7 @@ class SendgridHook(View):
                     email.reason = ''
 
                 try:
-                    current_options = self.state_flow[email.event]
+                    current_options = SendgridHook.state_flow[email.event]
                     if event['event'] in current_options:
                         email.event = event['event']
                     else:
@@ -69,5 +71,14 @@ class SendgridHook(View):
             except (Email.DoesNotExist, KeyError):
                 if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
                     raise
+
+    def post(self, request):
+        if getattr(settings, 'SENDGRID_EVENT_HANDLER', False):
+            sendgrid_event_handler_path = getattr(settings, 'SENDGRID_EVENT_HANDLER', False)
+            sendgrid_event_handler = import_string(sendgrid_event_handler_path)
+            # event_handler = __import__(getattr(settings, 'SENDGRID_EVENT_HANDLER', False))
+            sendgrid_event_handler(request.body)
+        else:
+            SendgridHook.handle_event(request.body)
 
         return HttpResponse('Thanks!')
