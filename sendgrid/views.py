@@ -76,7 +76,6 @@ class SendgridHook(View):
         if getattr(settings, 'SENDGRID_EVENT_HANDLER', False):
             sendgrid_event_handler_path = getattr(settings, 'SENDGRID_EVENT_HANDLER', False)
             sendgrid_event_handler = import_string(sendgrid_event_handler_path)
-            # event_handler = __import__(getattr(settings, 'SENDGRID_EVENT_HANDLER', False))
             sendgrid_event_handler(request.body)
         else:
             SendgridHook.handle_event(request.body)
