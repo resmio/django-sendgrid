@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('timestamp', models.DateTimeField(verbose_name='timestamp')),
                 ('uuid', models.CharField(default=sendgrid.models._new_uuid, max_length=64,
                                           verbose_name='reference UUID', db_index=True)),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType', null=True)),
+                ('content_type', models.ForeignKey(on_delete=models.CASCADE, to='contenttypes.ContentType', null=True)),
             ],
             options={
             },
