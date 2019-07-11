@@ -15,16 +15,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Email',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('created', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated', models.DateTimeField(auto_now=True, verbose_name='updated')),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(
+                    auto_now_add=True, verbose_name='created')),
+                ('updated', models.DateTimeField(
+                    auto_now=True, verbose_name='updated')),
                 ('object_id', models.PositiveIntegerField(null=True)),
                 ('email', models.CharField(max_length=512, verbose_name='addressee')),
                 ('event', models.CharField(max_length=32, verbose_name='event type')),
                 ('timestamp', models.DateTimeField(verbose_name='timestamp')),
                 ('uuid', models.CharField(default=sendgrid.models._new_uuid, max_length=64,
                                           verbose_name='reference UUID', db_index=True)),
-                ('content_type', models.ForeignKey(on_delete=models.CASCADE, to='contenttypes.ContentType', null=True)),
+                ('content_type', models.ForeignKey(
+                    to='contenttypes.ContentType', null=True, on_delete=models.CASCADE)),
             ],
             options={
             },
