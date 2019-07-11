@@ -15,8 +15,8 @@ def read_file(filename):
 setup(
     name='django-sendgrid-webhook',
     version=__import__('sendgrid').__version__,
-    author='Jann Kleen',
-    author_email='jann.kleen@gmail.com',
+    author='Resmio',
+    author_email='support@gmail.com',
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/resmio/django-sendgrid',
@@ -26,7 +26,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Intended Audience :: Developers',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
         'Framework :: Django',
         'Framework :: Django :: 1.4',
