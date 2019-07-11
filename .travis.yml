@@ -1,13 +1,17 @@
 language: python
+dist: xenial
 
 python:
-  - "2.7"
   - "3.6"
 
 env:
   - DB=mysql
   - DB=postgres
   - DB=sqlite
+
+services:
+  - postgresql
+  - mysql
 
 install:
   - pip install -q tox-travis

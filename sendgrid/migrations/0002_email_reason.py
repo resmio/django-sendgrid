@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='email',
             name='reason',
-            field=models.CharField(default=b'', max_length=1024, verbose_name='reason'),
+            field=models.CharField(default='', max_length=1024, verbose_name='reason'),
             preserve_default=True,
         ),
     ]
