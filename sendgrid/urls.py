@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from .views import SendgridHook
 
 urlpatterns = [
-    url(r'^sendgrid_callback/$', SendgridHook.as_view()),
+    path('sendgrid_callback/', SendgridHook.as_view()),
 ]
