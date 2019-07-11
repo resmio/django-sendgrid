@@ -9,6 +9,10 @@ env:
   - DB=postgres
   - DB=sqlite
 
+services:
+  - postgresql
+  - mysql
+
 install:
   - pip install -q tox-travis
 
