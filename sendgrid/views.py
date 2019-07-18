@@ -37,40 +37,53 @@ class SendgridHook(View):
     def dispatch(self, *args, **kwargs):
         return super(SendgridHook, self).dispatch(*args, **kwargs)
 
+
+    @staticmethod
+    def handle_single_event(event):
+        try:
+            email = Email.objects.get(uuid=event['uuid'])
+            email.email = event['email']
+            email.reason = event.get('reason', None)
+            if email.reason is None:
+                email.reason = ''
+
+            try:
+                current_options = SendgridHook.state_flow[email.event]
+                if event['event'] in current_options:
+                    email.event = event['event']
+                else:
+                    return
+                    # XXX log that callbacks arrive in the wrong order or are duplicates
+            except KeyError:
+                if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
+                    raise
+                else:
+                    pass
+                    # XXX log that we are in an unknown state and most likely something is wrong
+                    #     (or the API got updated)
+            timestamp = datetime.datetime.fromtimestamp(int(event['timestamp']))
+            if settings.USE_TZ:
+                timestamp = timestamp.utcnow().replace(tzinfo=utc)
+            email.timestamp = timestamp
+            email.save()
+            email_event.send(email)
+        except (Email.DoesNotExist, KeyError):
+            if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
+                raise
+
     @staticmethod
     def handle_event(body):
         response = json.loads(body)
-        for event in response:
-            try:
-                email = Email.objects.get(uuid=event['uuid'])
-                email.email = event['email']
-                email.reason = event.get('reason', None)
-                if email.reason is None:
-                    email.reason = ''
 
-                try:
-                    current_options = SendgridHook.state_flow[email.event]
-                    if event['event'] in current_options:
-                        email.event = event['event']
-                    else:
-                        continue
-                        # XXX log that callbacks arrive in the wrong order or are duplicates
-                except KeyError:
-                    if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
-                        raise
-                    else:
-                        pass
-                        # XXX log that we are in an unknown state and most likely something is wrong
-                        #     (or the API got updated)
-                timestamp = datetime.datetime.fromtimestamp(int(event['timestamp']))
-                if settings.USE_TZ:
-                    timestamp = timestamp.utcnow().replace(tzinfo=utc)
-                email.timestamp = timestamp
-                email.save()
-                email_event.send(email)
-            except (Email.DoesNotExist, KeyError):
-                if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
-                    raise
+        alternative_single_event_handler = getattr(settings, 'SENDGRID_SINGLE_EVENT_HANDLER', False)
+
+        for event in response:
+            if alternative_single_event_handler:
+                sendgrid_event_handler = import_string(alternative_single_event_handler)
+                sendgrid_event_handler(event)
+            else:
+                SendgridHook.handle_single_event(event)
+
 
     def post(self, request):
         if getattr(settings, 'SENDGRID_EVENT_HANDLER', False):
