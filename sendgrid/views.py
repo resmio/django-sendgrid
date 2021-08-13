@@ -41,7 +41,9 @@ class SendgridHook(View):
     @staticmethod
     def handle_single_event(event):
         try:
-            email = Email.objects.get(uuid=event['uuid'])
+            email = Email.objects.filter(uuid=event['uuid']).first()
+            if email is None:
+                return
             email.email = event['email']
             email.reason = event.get('reason', None)
             if email.reason is None:
@@ -67,7 +69,7 @@ class SendgridHook(View):
             email.timestamp = timestamp
             email.save()
             email_event.send(email)
-        except (Email.DoesNotExist, KeyError):
+        except KeyError:
             if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
                 raise
 
