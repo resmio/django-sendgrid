@@ -1,3 +1,6 @@
+import json
+import datetime
+
 from django.views.generic import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -5,9 +8,6 @@ from django.http import HttpResponse
 from django.utils.timezone import utc
 from django.conf import settings
 from django.utils.module_loading import import_string
-
-import json
-import datetime
 
 from .models import Email
 from .signals import email_event
