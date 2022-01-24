@@ -1,15 +1,11 @@
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
+import uuid
 import django
 
-try:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-    from django.contrib.contenttypes.models import ContentType
-except ImportError:  # Django < 1.9
-    from django.contrib.contenttypes.generic import GenericForeignKey
-    from django.contrib.contenttypes.models import ContentType
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-import uuid
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from .signals import email_event
 
@@ -34,14 +30,13 @@ class Email(models.Model):
     timestamp = models.DateTimeField(_('timestamp'))
     uuid = models.CharField(_('reference UUID'), max_length=64, default=_new_uuid, db_index=True)
 
-    def __unicode__(self):
-        return '%s: %s' % (self.email, self.event)
-
     class Meta:
-        if django.VERSION[0] == 1 and django.VERSION[1] > 4:
-            index_together = [
-                ['content_type', 'object_id'],
-            ]
+        index_together = (
+            ('content_type', 'object_id'),
+        )
+
+    def __str__(self):
+        return '%s: %s' % (self.email, self.event)
 
     def save(self, *args, **kwargs):
         # check if we're just creating the object

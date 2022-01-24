@@ -1,9 +1,10 @@
+import uuid
+import json
+
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.conf import settings
 from django.utils.timezone import utc
 
-import uuid
-import json
 from datetime import datetime
 
 from .models import Email
