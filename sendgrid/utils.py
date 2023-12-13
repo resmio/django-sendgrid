@@ -1,11 +1,10 @@
-import uuid
 import json
-
-from django.core.mail import EmailMessage, EmailMultiAlternatives
-from django.conf import settings
-from django.utils.timezone import utc
-
+import uuid
 from datetime import datetime
+
+from django.conf import settings
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.utils.timezone import utc
 
 from .models import Email
 
@@ -46,7 +45,7 @@ class SendgridEmailMessage(EmailMessage):
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
-        Email.objects.create(**data)
+        Email.objects.update_or_create(uuid=self.uuid, default=data)
         return ret
 
 
@@ -86,5 +85,5 @@ class SendgridEmailMultiAlternatives(EmailMultiAlternatives):
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
-        Email.objects.create(**data)
+        Email.objects.update_or_create(uuid=self.uuid, default=data)
         return ret
