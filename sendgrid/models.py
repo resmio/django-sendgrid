@@ -1,11 +1,9 @@
 import uuid
-import django
-
-from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from .signals import email_event
 
@@ -26,7 +24,7 @@ class Email(models.Model):
 
     email = models.CharField(_('addressee'), max_length=512)
     event = models.CharField(_('event type'), max_length=32)
-    reason = models.CharField(_('reason'), max_length=1024, default='')
+    reason = models.TextField(_('reason'), default='')
     timestamp = models.DateTimeField(_('timestamp'))
     uuid = models.CharField(_('reference UUID'), max_length=64, default=_new_uuid, db_index=True)
 
