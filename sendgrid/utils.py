@@ -45,7 +45,7 @@ class SendgridEmailMessage(EmailMessage):
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
-        Email.objects.update_or_create(uuid=self.uuid, default=data)
+        Email.objects.update_or_create(uuid=self.uuid, defaults=data)
         return ret
 
 
@@ -85,5 +85,5 @@ class SendgridEmailMultiAlternatives(EmailMultiAlternatives):
                 'event': 'initiated', }
         if self.obj:  # Work around for django < 1.7 because it doesn't support assigning None to generic FKs
             data.update({'content_object': self.obj, })
-        Email.objects.update_or_create(uuid=self.uuid, default=data)
+        Email.objects.update_or_create(uuid=self.uuid, defaults=data)
         return ret
