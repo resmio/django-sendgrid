@@ -2,6 +2,7 @@ import datetime
 import json
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.utils.module_loading import import_string
@@ -42,6 +43,9 @@ class SendgridHook(View):
     def handle_single_event(event):
         try:
             email = Email.objects.filter(uuid=event['uuid']).order_by('created').last()
+            if email is None:
+                raise ObjectDoesNotExist()
+
             email.email = event['email']
             email.reason = event.get('reason', None)
             if email.reason is None:
@@ -67,7 +71,7 @@ class SendgridHook(View):
             email.timestamp = timestamp
             email.save()
             email_event.send(email)
-        except (Email.DoesNotExist, KeyError):
+        except (ObjectDoesNotExist, KeyError):
             if not getattr(settings, 'SENDGRID_EVENTS_IGNORE_MISSING', False):
                 raise
 
